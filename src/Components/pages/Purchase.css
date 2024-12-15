@@ -1,0 +1,156 @@
+/* Global Styles */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color:red; /* Dark grey background */
+  }
+  
+  h1 {
+    font-size: 24px;
+    margin: 0;
+    color: #ffffff;
+  }
+  
+  input {
+    padding: 10px;
+    margin-left: 10px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+  }
+  
+  button {
+    padding: 10px 20px;
+    background-color: #0a74da;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  button:hover {
+    background-color: #005b99;
+  }
+  
+  /* Layout Styles */
+  .product-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #fff;
+    padding: 10px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+  }
+  
+  .content {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+  }
+  
+  /* Image Gallery (Left Column) */
+  .image-gallery {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100px; /* Width of thumbnail column */
+  }
+  
+  .thumbnail {
+    width: 60px;  /* Smaller thumbnail size */
+    height: 60px; /* Smaller thumbnail size */
+    background-color: #ccc;
+    text-align: center;
+    line-height: 60px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .thumbnail.selected {
+    border: 2px solid #0a74da;
+    background-color: #e0f7fa;
+  }
+  
+  .thumbnail:hover {
+    background-color: #0a74da;
+    color: white;
+  }
+  
+  /* Product Image (Right Column) */
+  .product-image {
+    max-width: 100px;  /* Set the maximum width to make the image small */
+    width: 10px;
+    display: flex;
+    justify-content: flex-start; /* Aligning to the left */
+  }
+  
+  .main-image {
+    width: 1px;  /* Use the full width of the product-image container */
+    height: auto;  /* Maintain aspect ratio */
+    max-width: 50px;  /* Set the maximum width to 90px to keep it very small */
+    border-radius: 8px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+  }
+  
+  /* Product Details */
+  .product-details {
+    max-width: 50px;
+    padding: 20px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    flex-grow: fl;
+  }
+  
+  .price {
+    font-size: 20px;
+    font-weight: bold;
+  }
+  
+  .mrp {
+    text-decoration: line-through;
+    color: #888;
+  }
+  
+  .discount {
+    color: #e74c3c;
+  }
+  
+  .specifications h4 {
+    font-size: 18px;
+    margin-bottom: 10px;
+  }
+  
+  .specifications ul {
+    list-style-type: none;
+    padding-left: 0;
+  }
+  
+  .specifications li {
+    margin: 5px 0;
+  }
+  
+  /* Media Query for smaller screens */
+  @media (max-width: 10px) {
+    .content {
+      flex-direction: column;
+      align-items: center;
+    }
+  
+    .product-image {
+      max-width: 100%;
+    }
+  
+    .product-details {
+      width: 100%;
+    }
+  }
+  
