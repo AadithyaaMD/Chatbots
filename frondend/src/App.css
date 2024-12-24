@@ -1,0 +1,219 @@
+/* General Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', Arial, sans-serif;
+}
+
+/* Split-Screen Container */
+.split-screen {
+  display: flex;
+  height: 100vh; /* Full viewport height */
+  background-color: #100e0e; /* Dark Base */
+}
+
+/* Left Screen: Chatbot Section */
+.left-screen {
+  flex: 1;
+  background: radial-gradient(circle, #0d0c0c, #121010); /* Galaxy Gradient */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-right: 2px solid rgba(255, 255, 255, 0.2);
+  padding: 20px;
+  overflow-y: auto;
+  position: relative;
+}
+
+.left-screen::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 50%;
+  height: 50%;
+  background-image: url('/images/chatbot2.png');
+  background-repeat: repeat;
+  background-size: cover;
+  background-position: center;
+  opacity: 0.4;
+  z-index: 0;
+}
+
+/* Chatbot Container with Transparency */
+.chatbot-container {
+  background: rgba(255, 255, 255, 0.7); /* Transparent black glass */
+  backdrop-filter: blur(15px); /* Glass-like blur effect */
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.7);
+  padding: 20px;
+  width: 90%;
+  max-width: 500px;
+  color: #ddd;
+  z-index: 1;
+  text-align: center;
+}
+
+.chatbot-container h3 {
+  font-size: 1.5rem;
+  color: #f4f4f4;
+}
+
+.chatbot-container p {
+  font-size: 1rem;
+  margin-top: 10px;
+  opacity: 0.8;
+}
+
+/* Welcome Message Styling */
+.welcome-message {
+  position: absolute;
+  top: 15%;
+  text-align: center;
+  color: #fdfbfb;
+  font-size: 2rem;
+  font-weight: bold;
+  animation: fadeIn 2s ease-in-out;
+  z-index: 1;
+}
+
+.welcome-message span {
+  display: block;
+  font-size: 1.2rem;
+  font-weight: normal;
+  margin-top: 10px;
+  opacity: 0.8;
+}
+
+/* Fade-in Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Right Screen: Content Section */
+.right-screen {
+  flex: 1.5;
+  background: linear-gradient(to bottom, #000000, #121212);
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  color: #f4f4f4;
+  overflow-y: auto;
+}
+
+.right-screen .header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  padding-bottom: 10px;
+}
+
+.right-screen .header h1 {
+  font-size: 1.8rem;
+  color: #fff;
+}
+
+.search-bar input {
+  padding: 8px;
+  border: none;
+  border-radius: 4px;
+  
+  outline: none;
+  background: #222;
+  color: #fff;
+}
+
+.search-bar .search-button {
+  padding: 8px 12px;
+  background-color: #444;
+  max-width:100px;
+  color: #fff;
+  border: none;
+  max-height: 100px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.search-bar .search-button:hover {
+  background-color: #555;
+  max-height:100px;
+}
+
+/* Laptop Carousel Section */
+.laptop-carousel-section {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+.laptop-item {
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.laptop-item img {
+  width: 160px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+}
+
+.laptop-item p {
+  margin-top: 8px;
+  font-size: 1rem;
+  color: #ddd;
+}
+
+.laptop-item:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.6);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .split-screen {
+    flex-direction: column;
+  }
+
+  .left-screen,
+  .right-screen {
+    flex: none;
+    height: 50vh;
+  }
+
+  .chatbot-container {
+    padding: 15px;
+    font-size: 0.9rem;
+  }
+
+  .laptop-item img {
+    width: 120px;
+    height: 80px;
+  }
+}
+
+@media (max-width: 480px) {
+  .welcome-message {
+    font-size: 1.5rem;
+  }
+
+  .laptop-item img {
+    width: 100px;
+    height: 70px;
+  }
+
+  .search-bar input {
+    width: 70%;
+  }
+}
