@@ -1,4 +1,3 @@
-/* General Reset */
 * {
   margin: 0;
   padding: 0;
@@ -10,13 +9,13 @@
 .split-screen {
   display: flex;
   height: 100vh; /* Full viewport height */
-  background-color: #100e0e; /* Dark Base */
+  background-color: #000; /* Dark Base */
 }
 
 /* Left Screen: Chatbot Section */
 .left-screen {
   flex: 1;
-  background: radial-gradient(circle, #0d0c0c, #121010); /* Galaxy Gradient */
+  background: radial-gradient(circle, #121212, #000000); /* Galaxy Gradient */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -31,9 +30,9 @@
   position: absolute;
   top: 0;
   left: 0;
-  width: 50%;
-  height: 50%;
-  background-image: url('/images/chatbot2.png');
+  width: 100%;
+  height: 100%;
+  background-image: url('/images/chatbot.jpg');
   background-repeat: repeat;
   background-size: cover;
   background-position: center;
@@ -43,7 +42,7 @@
 
 /* Chatbot Container with Transparency */
 .chatbot-container {
-  background: rgba(255, 255, 255, 0.7); /* Transparent black glass */
+  background: rgba(20, 20, 20, 0.7); /* Transparent black glass */
   backdrop-filter: blur(15px); /* Glass-like blur effect */
   border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: 12px;
@@ -72,10 +71,10 @@
   position: absolute;
   top: 15%;
   text-align: center;
-  color: #fdfbfb;
+  color: #fff;
   font-size: 2rem;
   font-weight: bold;
-  animation: fadeIn 2s ease-in-out;
+  animation: fadeIn 0.5s ease-in-out;
   z-index: 1;
 }
 
@@ -90,7 +89,7 @@
 /* Fade-in Animation */
 @keyframes fadeIn {
   from {
-    opacity: 0;
+    opacity: 0.5;
   }
   to {
     opacity: 1;
@@ -125,7 +124,6 @@
   padding: 8px;
   border: none;
   border-radius: 4px;
-  
   outline: none;
   background: #222;
   color: #fff;
@@ -134,17 +132,14 @@
 .search-bar .search-button {
   padding: 8px 12px;
   background-color: #444;
-  max-width:100px;
   color: #fff;
   border: none;
-  max-height: 100px;
   border-radius: 4px;
   cursor: pointer;
 }
 
 .search-bar .search-button:hover {
   background-color: #555;
-  max-height:100px;
 }
 
 /* Laptop Carousel Section */
@@ -159,12 +154,14 @@
   text-align: center;
   cursor: pointer;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  width: 180px; /* Adjust width as needed */
+  height: auto; /* Allow flexible height */
 }
 
 .laptop-item img {
-  width: 160px;
-  height: 100px;
-  object-fit: cover;
+  width: 100%;  /* Ensure the image fills the container width */
+  height: auto; /* Keep the aspect ratio intact */
+  object-fit: contain; /* Ensures the entire image is visible without clipping */
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
 }
@@ -198,8 +195,8 @@
   }
 
   .laptop-item img {
-    width: 120px;
-    height: 80px;
+    width: 100%;  /* Ensure image is responsive */
+    height: auto;
   }
 }
 
@@ -209,11 +206,113 @@
   }
 
   .laptop-item img {
-    width: 100px;
-    height: 70px;
+    width: 100%;  /* Ensure image is responsive */
+    height: auto;
   }
 
   .search-bar input {
     width: 70%;
+  }
+}
+
+
+
+
+/* Full Page Layout for User Management */
+.user-management-page {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  height: 100vh; /* Full viewport height */
+  background-color: #f9f9f9;
+  font-family: 'Poppins', sans-serif;
+}
+
+.user-details-section {
+  width: 100%;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.user-header h2 {
+  font-size: 2rem;
+  color: #333;
+  margin-bottom: 5px;
+}
+
+.user-header p {
+  color: #777;
+  font-size: 1rem;
+}
+
+.wallet-section {
+  width: 100%;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.user-wallet {
+  font-size: 1.5rem;
+  color: #333;
+}
+
+.orders-section {
+  width: 100%;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.orders-button {
+  padding: 12px 25px;
+  font-size: 1.2rem;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.orders-button:hover {
+  background-color: #45a049;
+}
+
+.logout-section {
+  width: 100%;
+  text-align: center;
+}
+
+.logout-button {
+  padding: 12px 25px;
+  font-size: 1.2rem;
+  background-color: #f44336;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.logout-button:hover {
+  background-color: #e53935;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .user-management-page {
+    padding: 10px;
+  }
+
+  .user-header h2 {
+    font-size: 1.8rem;
+  }
+
+  .user-wallet {
+    font-size: 1.3rem;
+  }
+
+  .orders-button, .logout-button {
+    padding: 10px 20px;
+    font-size: 1rem;
   }
 }

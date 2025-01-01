@@ -1,49 +1,99 @@
+/* General Layout */
+body {
+  margin: 0;
+  font-family: 'Roboto', sans-serif;
+  background-color: #000; /* Black background */
+  color: #fff; /* Light-colored text */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+/* Login Container */
 .login-container {
-  text-align: center;
-  max-width: 400px;
-  margin: auto;
-  background: #fff;
-  padding: 20px;
+  width: 100%;
+  max-width: 450px;
+  background-color: #1a1a1a; /* Slightly lighter black for form container */
+  padding: 40px;
   border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8); /* Subtle shadow for depth */
+  text-align: center;
 }
 
-h1 {
+/* Heading */
+.login-container h2 {
   margin-bottom: 20px;
+  color: #fff; /* White heading text */
 }
 
+/* Input Groups */
 .input-group {
-  margin: 15px 0;
+  margin-bottom: 15px;
 }
 
-label {
+.input-group label {
   display: block;
   margin-bottom: 5px;
+  color: #ccc; /* Light gray labels */
 }
 
-input {
+.input-group input {
   width: 100%;
-  padding: 10px;
-  border: 1px solid #ccc;
+  padding: 12px;
+  border: 1px solid #444; /* Darker border for inputs */
   border-radius: 5px;
+  background-color: #2b2b2b; /* Dark gray input background */
+  color: #fff; /* White text */
+  font-size: 16px;
+  outline: none;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
+.input-group input:focus {
+  border-color: #4CAF50; /* Green border on focus */
+  box-shadow: 0 0 8px rgba(76, 175, 80, 0.5); /* Green glow on focus */
+}
+
+/* Error Message */
+.error-message {
+  color: #e74c3c; /* Red for error messages */
+  font-size: 14px;
+  margin-top: 10px;
+}
+
+/* Login Button */
 .login-btn {
   width: 100%;
-  padding: 10px;
-  background: #4CAF50;
-  color: white;
+  padding: 12px;
+  background-color: #4CAF50; /* Green background */
+  color: #fff; /* White text */
   border: none;
   border-radius: 5px;
+  font-size: 16px;
   cursor: pointer;
+  margin-bottom: 15px;
+  transition: background-color 0.3s ease;
 }
 
+.login-btn:hover {
+  background-color: #45a049; /* Darker green on hover */
+}
+
+/* Additional Options */
 .extra-options {
-  margin-top: 15px;
+  margin-top: 20px;
 }
 
 .extra-options a {
-  margin: 0 10px;
-  color: #4CAF50;
+  color: #4CAF50; /* Green link */
   text-decoration: none;
+  font-weight: bold;
+  font-size: 14px;
+  transition: color 0.3s ease;
+}
+
+.extra-options a:hover {
+  color: #45a049; /* Darker green on hover */
+  text-decoration: underline;
 }

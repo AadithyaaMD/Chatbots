@@ -1,15 +1,32 @@
-import React from 'react';
-
-const laptops = [
-  { name: 'HP', imgSrc: './public/images/hpimage.jpg', onClick: 'handleHpClick' },
-  { name: 'DELL', imgSrc: './public/images/dellimage.avif', onClick: 'handleDellClick' },
-  { name: 'ASUS', imgSrc: './public/images/asus.jpg' },
-  { name: 'SAMSUNG', imgSrc: './public/images/samsung.jpg' },
-  { name: 'APPLE', imgSrc: './public/images/apple.webp' },
-];
+import React, { useState } from 'react';
+import UserManagement from './usermanagement';
 
 const LaptopSection = ({ handleHpClick, handleDellClick }) => {
+  const [showUserManagement, setShowUserManagement] = useState(false);
+  const [user, setUser] = useState({
+    name: "John Doe",
+    email: "john@example.com"
+    
+  });
+  const laptops = [
+    { name: 'HP', imgSrc: '/images/hpimage.jpg', onClick: 'handleHpClick' },
+  { name: 'DELL', imgSrc: '/images/dellimage.avif', onClick: 'handleDellClick' },
+  { name: 'ASUS', imgSrc: '/images/asus.jpg' },
+  { name: 'SAMSUNG', imgSrc: '/images/samsung.jpg' },
+  { name: 'APPLE', imgSrc: '/images/apple.webp' },
+  ];
+  
+  const handleLogout = () => {
+    // Add your logout logic here
+    setShowUserManagement(false);
+    // Clear user session/localStorage etc.
+  };
+
   const clickHandlers = { handleHpClick, handleDellClick };
+
+  if (showUserManagement) {
+    return <UserManagement user={user} onLogout={handleLogout} />;
+  }
 
   return (
     <div className="right-screen">
@@ -19,7 +36,12 @@ const LaptopSection = ({ handleHpClick, handleDellClick }) => {
           <button className="search-button">🔍</button>
         </div>
         <div className="user-cart-icons">
-          <button className="user-icon">👤</button>
+          <button 
+            className="user-icon"
+            onClick={() => setShowUserManagement(true)}
+          >
+            👤
+          </button>
           <button className="cart-icon">🛒</button>
         </div>
       </header>

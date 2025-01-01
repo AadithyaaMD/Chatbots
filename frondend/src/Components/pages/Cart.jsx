@@ -4,6 +4,15 @@ import { useCart } from '../../contexts/CartContext'; // Correct path to CartCon
 function CartPage() {
   const { cartItems, removeFromCart, clearCart } = useCart(); // Get methods from CartContext
 
+  // Placeholder function to simulate the order placement
+  const placeOrder = () => {
+    // You can replace this with an actual order API call when the backend is ready
+    alert('Your order has been placed successfully!');
+    
+    // Clear the cart after the order is placed
+    clearCart();
+  };
+
   useEffect(() => {
     console.log('Cart Items:', cartItems); // Debugging
   }, [cartItems]);
@@ -38,6 +47,11 @@ function CartPage() {
             </button>
             <button onClick={() => alert('Proceeding to checkout!')} style={styles.checkoutButton}>
               Checkout
+            </button>
+            
+            {/* "Order Now" Button */}
+            <button onClick={placeOrder} style={styles.orderButton}>
+              Order Now
             </button>
           </div>
         </div>
@@ -86,6 +100,8 @@ const styles = {
   itemDescription: {
     fontSize: '14px',
     color: '#7f8c8d', // Muted gray
+    marginBottom: '10px', // Add some space between description and price
+    lineHeight: '1.4', // Improve readability with more space between lines
   },
   itemPrice: {
     fontSize: '16px',
@@ -114,6 +130,15 @@ const styles = {
   },
   checkoutButton: {
     backgroundColor: '#4caf50',
+    color: '#fff',
+    border: 'none',
+    borderRadius: '5px',
+    padding: '10px 20px',
+    cursor: 'pointer',
+    marginRight: '10px',
+  },
+  orderButton: {
+    backgroundColor: '#f39c12', // Orange color for "Order Now"
     color: '#fff',
     border: 'none',
     borderRadius: '5px',
