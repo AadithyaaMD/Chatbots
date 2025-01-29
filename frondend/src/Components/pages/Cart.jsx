@@ -1,154 +1,148 @@
-import React, { useEffect } from 'react';
-import { useCart } from '../../contexts/CartContext'; // Correct path to CartContext.js
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { getAuth } from "firebase/auth";
+import { CartService } from "./cartService";
 
 function CartPage() {
-  const { cartItems, removeFromCart, clearCart } = useCart(); // Get methods from CartContext
-
-  // Placeholder function to simulate the order placement
-  const placeOrder = () => {
-    // You can replace this with an actual order API call when the backend is ready
-    alert('Your order has been placed successfully!');
-    
-    // Clear the cart after the order is placed
-    clearCart();
-  };
+  const navigate = useNavigate();
+  const auth = getAuth();
+  const [cartItems, setCartItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    console.log('Cart Items:', cartItems); // Debugging
-  }, [cartItems]);
+    let unsubscribe;
+
+    if (auth.currentUser) {
+      // Subscribe to real-time cart updates
+      unsubscribe = CartService.subscribeToCart(
+        auth.currentUser.uid,
+        (items) => {
+          setCartItems(items);
+          setLoading(false);
+        }
+      );
+    } else {
+      setLoading(false);
+    }
+
+    return () => {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    };
+  }, [auth.currentUser]);
+
+  const removeFromCart = async (productId) => {
+    try {
+      await CartService.removeFromCart(auth.currentUser.uid, productId);
+    } catch (error) {
+      setError("Failed to remove item from cart");
+    }
+  };
+
+  const clearCart = async () => {
+    try {
+      await CartService.clearCart(auth.currentUser.uid);
+    } catch (error) {
+      setError("Failed to clear cart");
+    }
+  };
+
+  const handleCheckout = () => {
+    navigate("/checkout", { state: { items: cartItems } });
+  };
+
+  if (!auth.currentUser) {
+    return (
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-xl text-gray-600 mb-4">Please login to view your cart</p>
+          <button
+            onClick={() => navigate("/login")}
+            className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700"
+          >
+            Login
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="cart-page" style={styles.page}>
-      <h1 style={styles.header}>Your Shopping Cart</h1>
-      
-      {cartItems.length > 0 ? (
-        <div>
-          <ul style={styles.cartList}>
-            {cartItems.map((item, index) => (
-              <li key={index} style={styles.cartItem}>
-                <div>
-                  <h3 style={styles.itemName}>{item.title || "Unnamed Item"}</h3>
-                  <p style={styles.itemDescription}>{item.description || "No description available."}</p>
-                  <p style={styles.itemPrice}><strong>₹{item.price || "0.00"}</strong></p>
+    <div className="min-h-screen bg-gray-100 py-8">
+      <div className="container mx-auto px-4">
+        <h1 className="text-3xl font-bold text-gray-800 mb-8 text-center">
+          Your Shopping Cart
+        </h1>
+
+        {error && (
+          <div className="mb-4 p-4 bg-red-100 text-red-700 rounded-lg">
+            {error}
+          </div>
+        )}
+
+        {loading ? (
+          <div className="text-center">
+            <p className="text-xl text-gray-600">Loading cart...</p>
+          </div>
+        ) : cartItems.length === 0 ? (
+          <div className="text-center">
+            <p className="text-xl text-gray-600 mb-4">Your cart is empty!</p>
+            <button
+              onClick={() => navigate("/")}
+              className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700"
+            >
+              Continue Shopping
+            </button>
+          </div>
+        ) : (
+          <div className="bg-white rounded-lg shadow-lg p-6">
+            {cartItems.map((item) => (
+              <div
+                key={item.id}
+                className="flex items-center justify-between border-b py-4 last:border-b-0"
+              >
+                <div className="flex items-center space-x-4">
+                  <img
+                    src={item.image}
+                    alt={item.title}
+                    className="w-24 h-24 object-contain"
+                  />
+                  <div>
+                    <h3 className="font-semibold">{item.title}</h3>
+                    <p className="text-gray-600">{item.description}</p>
+                    <p className="text-green-600 font-bold mt-1">{item.price}</p>
+                  </div>
                 </div>
                 <button
                   onClick={() => removeFromCart(item.id)}
-                  style={styles.removeButton}
+                  className="text-red-600 hover:text-red-800"
                 >
                   Remove
                 </button>
-              </li>
+              </div>
             ))}
-          </ul>
-          
-          <div style={styles.buttonsContainer}>
-            <button onClick={clearCart} style={styles.clearButton}>
-              Clear Cart
-            </button>
-            <button onClick={() => alert('Proceeding to checkout!')} style={styles.checkoutButton}>
-              Checkout
-            </button>
-            
-            {/* "Order Now" Button */}
-            <button onClick={placeOrder} style={styles.orderButton}>
-              Order Now
-            </button>
+
+            <div className="mt-6 flex justify-between items-center">
+              <button
+                onClick={clearCart}
+                className="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700"
+              >
+                Clear Cart
+              </button>
+              <button
+                onClick={handleCheckout}
+                className="bg-green-600 text-white px-8 py-2 rounded-lg hover:bg-green-700"
+              >
+                Proceed to Checkout
+              </button>
+            </div>
           </div>
-        </div>
-      ) : (
-        <p style={styles.emptyCart}>Your cart is empty!</p> 
-      )}
+        )}
+      </div>
     </div>
   );
 }
-
-const styles = {
-  page: {
-    padding: '20px',
-    backgroundColor: '#f8f8f8',
-    minHeight: '100vh',
-    textAlign: 'center',
-  },
-  header: {
-    fontSize: '36px',
-    fontWeight: 'bold',
-    color: '#2c3e50', // Dark blue-gray
-    marginBottom: '20px',
-  },
-  cartList: {
-    listStyle: 'none',
-    padding: '0',
-    margin: '0 auto',
-    maxWidth: '600px',
-    textAlign: 'left',
-  },
-  cartItem: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    backgroundColor: '#fff',
-    padding: '15px',
-    marginBottom: '10px',
-    borderRadius: '8px',
-    boxShadow: '0px 2px 5px rgba(0, 0, 0, 0.1)',
-  },
-  itemName: {
-    fontSize: '18px',
-    fontWeight: 'bold',
-    color: '#34495e', // Slate gray
-  },
-  itemDescription: {
-    fontSize: '14px',
-    color: '#7f8c8d', // Muted gray
-    marginBottom: '10px', // Add some space between description and price
-    lineHeight: '1.4', // Improve readability with more space between lines
-  },
-  itemPrice: {
-    fontSize: '16px',
-    fontWeight: 'bold',
-    color: '#27ae60', // Green
-  },
-  removeButton: {
-    backgroundColor: '#ff6b6b',
-    color: '#fff',
-    border: 'none',
-    borderRadius: '5px',
-    padding: '10px 15px',
-    cursor: 'pointer',
-  },
-  buttonsContainer: {
-    marginTop: '20px',
-  },
-  clearButton: {
-    backgroundColor: '#d9534f',
-    color: '#fff',
-    border: 'none',
-    borderRadius: '5px',
-    padding: '10px 20px',
-    cursor: 'pointer',
-    marginRight: '10px',
-  },
-  checkoutButton: {
-    backgroundColor: '#4caf50',
-    color: '#fff',
-    border: 'none',
-    borderRadius: '5px',
-    padding: '10px 20px',
-    cursor: 'pointer',
-    marginRight: '10px',
-  },
-  orderButton: {
-    backgroundColor: '#f39c12', // Orange color for "Order Now"
-    color: '#fff',
-    border: 'none',
-    borderRadius: '5px',
-    padding: '10px 20px',
-    cursor: 'pointer',
-  },
-  emptyCart: {
-    fontSize: '20px',
-    color: '#555', // Dark gray
-  },
-};
 
 export default CartPage;

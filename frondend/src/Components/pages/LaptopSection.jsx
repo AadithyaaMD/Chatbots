@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import UserManagement from './usermanagement';
+import UserManagement from './UserManagement';
 
 const LaptopSection = ({ handleHpClick, handleDellClick }) => {
   const [showUserManagement, setShowUserManagement] = useState(false);

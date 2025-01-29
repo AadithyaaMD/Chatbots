@@ -1,0 +1,38 @@
+[
+    {
+      "id": "dell-inspiron-15-3535",
+      "model_name": "Dell Inspiron 15 3535",
+      "description": "The Dell Inspiron 15 3535 features a 15.6-inch display, AMD Ryzen 5 processor, 8GB RAM, and 512GB SSD, suitable for everyday computing needs.",
+      "price": 65990,
+      "image_url": "https://example.com/dell-inspiron-15-3535.jpg"
+    },
+    {
+      "id": "dell-vostro-3510",
+      "model_name": "Dell Vostro 3510",
+      "description": "The Dell Vostro 3510 comes with a 15.6-inch display, Intel Core i3 10th Gen processor, 8GB RAM, and 1TB HDD + 256GB SSD, ideal for business tasks.",
+      "price": 40990,
+      "image_url": "https://example.com/dell-vostro-3510.jpg"
+    },
+    {
+      "id": "dell-inspiron-15-3521",
+      "model_name": "Dell Inspiron 15 3521",
+      "description": "The Dell Inspiron 15 3521 offers a 15.6-inch display, Intel Pentium Silver processor, 8GB RAM, and 256GB SSD, perfect for basic computing needs.",
+      "price": 32999,
+      "image_url": "https://example.com/dell-inspiron-15-3521.jpg"
+    },
+    {
+      "id": "dell-g15-5520",
+      "model_name": "Dell G15 5520",
+      "description": "The Dell G15 5520 is a gaming laptop with a 15.6-inch display, Intel Core i5 12th Gen processor, 16GB RAM, 512GB SSD, and NVIDIA GeForce RTX 3050 graphics.",
+      "price": 87990,
+      "image_url": "https://example.com/dell-g15-5520.jpg"
+    },
+    {
+      "id": "dell-inspiron-14-5406",
+      "model_name": "Dell Inspiron 14 5406",
+      "description": "The Dell Inspiron 14 5406 is a 2-in-1 laptop featuring a 14-inch touchscreen display, Intel Core i5 11th Gen processor, 8GB RAM, and 512GB SSD.",
+      "price": 68644,
+      "image_url": "https://example.com/dell-inspiron-14-5406.jpg"
+    }
+  ]
+  

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { auth } from "../../config/config";
+import { db, auth } from "../../firebase/firebase.js"; // Correct path to Firebase configuration
 import { signInWithEmailAndPassword } from "firebase/auth";
 
 const Login = () => {
@@ -27,13 +27,17 @@ const Login = () => {
 
     signInWithEmailAndPassword(auth, formValues.email, formValues.password)
       .then((userCredential) => {
-        const user = userCredential.user;
-        setErrorMessage("");
-        alert("Login successful!");
-        navigate("/firstpage");
+        const user = userCredential.user; // User object
+        console.log("User logged in:", user); // Debugging user details
+
+        // Optional: Use user details
+        //alert(Welcome back, ${user.email}!); // Example: Show user email in alert
+        setErrorMessage(""); // Clear error message
+        navigate("/firstpage"); // Redirect to a specific page
       })
       .catch((error) => {
-        setErrorMessage(error.message);
+        console.error("Login error:", error.message); // Debug error
+        setErrorMessage(error.message); // Display error to the user
       });
   };
 
@@ -76,8 +80,8 @@ const Login = () => {
                 marginTop: "5px",
                 borderRadius: "5px",
                 border: "1px solid #444",
-                backgroundColor: "#2b2b2b", // Dark gray for input background
-                color: "#fff", // Light text for input
+                backgroundColor: "#2b2b2b",
+                color: "#fff",
                 fontSize: "16px",
               }}
             />

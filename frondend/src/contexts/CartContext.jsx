@@ -1,69 +1,61 @@
-import React, { createContext, useState, useEffect, useContext } from "react";
-import { db } from "../config/config";
-import { collection, getDocs, addDoc, deleteDoc, doc } from "firebase/firestore";
+import React, { createContext, useContext, useState, useEffect } from "react";
+import { db } from "../firebase/firebase"; // Path to Firebase configuration
+import { collection, addDoc, getDocs, doc, setDoc } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
 
 const CartContext = createContext();
 
+export const useCart = () => useContext(CartContext);
+
 export const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState([]);
+  const auth = getAuth();
 
-  // Fetch cart items from Firestore on component mount
+  // Fetch items for the current user
   useEffect(() => {
     const fetchCartItems = async () => {
-      const cartCollection = collection(db, "cart"); // Assuming 'cart' is your collection name
-      const cartSnapshot = await getDocs(cartCollection);
-      const cartList = cartSnapshot.docs.map((doc) => ({
-        ...doc.data(),
-        id: doc.id, // Ensure each item has a unique `id`
-      }));
-      setCartItems(cartList);
+      const user = auth.currentUser;
+      if (!user) return;
+
+      try {
+        const cartCollection = collection(db, "cartItems");
+        const cartSnapshot = await getDocs(cartCollection);
+        const cartData = cartSnapshot.docs
+          .filter((doc) => doc.data().userId === user.uid)
+          .map((doc) => ({ ...doc.data(), id: doc.id }));
+        setCartItems(cartData);
+      } catch (error) {
+        console.error("Error fetching cart items:", error);
+      }
     };
+
     fetchCartItems();
-  }, []);
+  }, [auth.currentUser]);
 
-  // Add an item to the cart in Firestore and state
-  const addToCart = async (item) => {
-    try {
-      const docRef = await addDoc(collection(db, "cart"), item); // Add item to Firestore
-      setCartItems([...cartItems, { ...item, id: docRef.id }]); // Append the new item with its Firestore `id`
-    } catch (error) {
-      console.error("Error adding item to cart:", error);
-    }
-  };
+  // Add to Cart function
+  const addToCart = async (product) => {
+    const user = auth.currentUser;
+    if (!user) throw new Error("User is not authenticated");
 
-  // Remove an item from the cart by its Firestore id
-  const removeFromCart = async (id) => {
     try {
-      const itemDoc = doc(db, "cart", id); // Reference to the document to delete
-      await deleteDoc(itemDoc); // Delete the item from Firestore
-      setCartItems(cartItems.filter(item => item.id !== id)); // Remove item from state
-    } catch (error) {
-      console.error("Error removing item from cart:", error);
-    }
-  };
-
-  // Clear all items from the cart
-  const clearCart = async () => {
-    try {
-      const cartCollection = collection(db, "cart");
-      const cartSnapshot = await getDocs(cartCollection);
-      cartSnapshot.forEach(async (doc) => {
-        await deleteDoc(doc.ref); // Delete each item
+      await addDoc(collection(db, "cartItems"), {
+        userId: user.uid,
+        name: product.title,
+        price: product.price,
+        image: product.image,
+        description: product.description,
+        model: product.model,
       });
-      setCartItems([]); // Clear the state
+
+      setCartItems((prevItems) => [...prevItems, product]);
     } catch (error) {
-      console.error("Error clearing cart:", error);
+      console.error("Error adding to cart:", error);
     }
   };
 
   return (
-    <CartContext.Provider value={{ cartItems, addToCart, removeFromCart, clearCart }}>
+    <CartContext.Provider value={{ cartItems, addToCart }}>
       {children}
     </CartContext.Provider>
   );
-};
-
-// Custom hook to use cart context
-export const useCart = () => {
-  return useContext(CartContext);
 };

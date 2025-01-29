@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { auth } from "../../config/config"; // Ensure Firebase is configured here
-import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth"; // Import updateProfile
+import { db, auth } from "../../firebase/firebase.js"; // Adjust path as needed
+
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth"; // Import Firebase Auth methods
+import { collection, addDoc } from "firebase/firestore"; // Import Firestore methods
 
 const SignUp = () => {
   const [formValues, setFormValues] = useState({
@@ -19,7 +21,7 @@ const SignUp = () => {
     setFormValues({ ...formValues, [name]: value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     // Validate inputs
@@ -38,27 +40,35 @@ const SignUp = () => {
       return;
     }
 
-    // Create user with Firebase Authentication
-    createUserWithEmailAndPassword(auth, formValues.email, formValues.password)
-      .then((userCredential) => {
-        const user = userCredential.user;
-        console.log("User created:", user);
+    try {
+      // Create user with Firebase Authentication
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        formValues.email,
+        formValues.password
+      );
+      const user = userCredential.user;
 
-        // Update user's displayName in Firebase Authentication
-        return updateProfile(user, {
-          displayName: formValues.name,
-        });
-      })
-      .then(() => {
-        console.log("Profile updated");
-        setErrorMessage(""); // Clear any previous error messages
-        alert("Account created successfully!");
-        navigate("/firstpage"); // Redirect user to the first page
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-        setErrorMessage(`Error: ${error.message}`);
+      // Save user details to Firestore
+      await addDoc(collection(db, "users"), {
+        uid: user.uid,
+        name: formValues.name,
+        email: formValues.email,
+        createdAt: new Date(),
       });
+
+      // Update user's displayName in Firebase Authentication
+      await updateProfile(user, {
+        displayName: formValues.name,
+      });
+
+      setErrorMessage(""); // Clear any error messages
+      alert("Account created successfully!");
+      navigate("/firstpage"); // Redirect to the first page
+    } catch (error) {
+      console.error("Error:", error);
+      setErrorMessage(`Error: ${error.message}`);
+    }
   };
 
   return (

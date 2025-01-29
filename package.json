@@ -2,5 +2,23 @@
   "dependencies": {
     "firebase": "^11.1.0",
     "react-router-dom": "^7.0.2"
-  }
+  },
+  "name": "chatbots",
+  "version": "1.0.0",
+  "main": "insertfile.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AadithyaaMD/Chatbots.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AadithyaaMD/Chatbots/issues"
+  },
+  "homepage": "https://github.com/AadithyaaMD/Chatbots#readme",
+  "description": ""
 }

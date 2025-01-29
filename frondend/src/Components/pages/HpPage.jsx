@@ -1,10 +1,14 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { db } from "./firebaseConfig";
-import { doc, setDoc } from "firebase/firestore";
+import { db } from "../../firebase/firebase";
+import { doc, setDoc, getDoc, updateDoc } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
 
 const App = () => {
   const navigate = useNavigate();
+  const [userCart, setUserCart] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const auth = getAuth();
 
   const products = [
     {
@@ -73,13 +77,14 @@ const App = () => {
       rating: "4.3 ⭐ (74)",
       description: "A powerful Intel Core i5 gaming laptop for immersive experiences.",
     },
+    // Add remaining products similarly...
   ];
 
   // Upload laptops to Firestore
   const uploadLaptops = async () => {
     try {
       for (const product of products) {
-        const docRef = doc(db, "laptops", product.model); // Unique document ID is the model name
+        const docRef = doc(db, "laptops", product.model);
         await setDoc(docRef, product);
         console.log(`Uploaded: ${product.model}`);
       }
@@ -88,17 +93,96 @@ const App = () => {
     }
   };
 
-  useEffect(() => {
-    uploadLaptops(); // Upload laptops to Firestore when the component loads
-  }, []);
+  // Fetch user cart from Firestore
+  const getUserCart = async () => {
+    try {
+      if (auth.currentUser) {
+        const userCartRef = doc(db, "carts", auth.currentUser.uid);
+        const userCartSnap = await getDoc(userCartRef);
+        
+        if (userCartSnap.exists()) {
+          setUserCart(userCartSnap.data().items || []);
+        } else {
+          // Create an empty cart for new users
+          await setDoc(userCartRef, { items: [] });
+          setUserCart([]);
+        }
+      }
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching cart:", error);
+      setLoading(false);
+    }
+  };
 
+  // Add product to cart
+  const addToCart = async (product) => {
+    try {
+      if (!auth.currentUser) {
+        alert("Please login to add items to cart");
+        // You might want to redirect to login page here
+        return;
+      }
+
+      const userCartRef = doc(db, "carts", auth.currentUser.uid);
+      const userCartSnap = await getDoc(userCartRef);
+
+      let updatedCart = [];
+      if (userCartSnap.exists()) {
+        updatedCart = userCartSnap.data().items;
+        
+        // Check if product already exists in cart
+        const productExists = updatedCart.some(item => item.id === product.id);
+        if (productExists) {
+          alert("This product is already in your cart");
+          return;
+        }
+      }
+
+      updatedCart.push(product);
+      await setDoc(userCartRef, { items: updatedCart });
+      setUserCart(updatedCart);
+      
+      alert("Product added to cart successfully!");
+      navigate("/cart"); // Navigate to cart instead of purchase page
+    } catch (error) {
+      console.error("Error adding to cart:", error);
+      alert("Failed to add product to cart. Please try again.");
+    }
+  };
+
+  // Handle Buy Now functionality
   const handleBuyNow = (product) => {
+    if (!auth.currentUser) {
+      alert("Please login to make a purchase");
+      // You might want to redirect to login page here
+      return;
+    }
     navigate("/purchase", { state: { product } });
   };
 
+  // Handle Cart button click
   const handleCartClick = () => {
+    if (!auth.currentUser) {
+      alert("Please login to view cart");
+      // You might want to redirect to login page here
+      return;
+    }
     navigate("/cart");
   };
+
+  useEffect(() => {
+    const initialize = async () => {
+      await uploadLaptops();
+      await getUserCart();
+    };
+
+    initialize();
+  }, [auth.currentUser]); // Re-run when user auth state changes
+
+  if (loading) {
+    return <div className="text-center p-8 text-white">Loading...</div>;
+  }
 
   return (
     <div className="second page" style={{ width: "100%", height: "100%", backgroundColor: "#212121" }}>
@@ -112,7 +196,17 @@ const App = () => {
             className="w-1/2 px-4 py-2 rounded-lg text-black"
           />
           <div className="flex space-x-5">
-            <button onClick={handleCartClick} className="text-white">🛒</button>
+            <button 
+              onClick={handleCartClick} 
+              className="text-white relative"
+            >
+              🛒
+              {userCart.length > 0 && (
+                <span className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 text-xs flex items-center justify-center">
+                  {userCart.length}
+                </span>
+              )}
+            </button>
             <button className="text-white">👤</button>
           </div>
         </div>
@@ -143,9 +237,17 @@ const App = () => {
               <p className="text-white line-through">{product.discountPrice}</p>
               <p className="text-yellow-300 mt-1">{product.rating}</p>
               <div className="mt-2 flex items-center justify-center space-x-2">
-                <span className="bg-green-600 text-white text-xs px-2 py-1 rounded">{product.discount}</span>
+                <span className="bg-green-600 text-white text-xs px-2 py-1 rounded">
+                  {product.discount}
+                </span>
                 <button
-                  className="bg-blue-600 px-4 py-1 rounded text-white hover:bg-white"
+                  className="bg-blue-600 px-4 py-1 rounded text-white hover:bg-blue-700 transition-colors"
+                  onClick={() => addToCart(product)}
+                >
+                  Add to Cart
+                </button>
+                <button
+                  className="bg-blue-600 px-4 py-1 rounded text-white hover:bg-blue-700 transition-colors"
                   onClick={() => handleBuyNow(product)}
                 >
                   Buy Now

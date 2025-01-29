@@ -1,3 +1,4 @@
+/* General Reset */
 * {
   margin: 0;
   padding: 0;
@@ -74,7 +75,7 @@
   color: #fff;
   font-size: 2rem;
   font-weight: bold;
-  animation: fadeIn 0.5s ease-in-out;
+  animation: fadeIn 2s ease-in-out;
   z-index: 1;
 }
 
@@ -89,7 +90,7 @@
 /* Fade-in Animation */
 @keyframes fadeIn {
   from {
-    opacity: 0.5;
+    opacity: 0;
   }
   to {
     opacity: 1;
@@ -189,10 +190,60 @@
     height: 50vh;
   }
 
-  .chatbot-container {
-    padding: 15px;
+  /* Adjust Chatbot Container */
+.chatbot-container {
+  background: none; /* Remove background */
+  border: none; /* Remove border */
+  box-shadow: none; /* Remove shadow */
+  padding: 0; /* Remove padding */
+  width: 100%; /* Full width */
+  max-width: none; /* Remove max width */
+  color: #ddd;
+  text-align: center;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  padding: 20px;
+}
+
+/* Add styling for input, options, and button */
+.chatbot-container input[type="text"], 
+.chatbot-container select, 
+.chatbot-container button {
+  width: 100%;
+  margin-top: 10px;
+  padding: 10px;
+  font-size: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 5px;
+  background-color: #222;
+  color: #fff;
+}
+
+.chatbot-container button {
+  cursor: pointer;
+  background-color: #444;
+}
+
+.chatbot-container button:hover {
+  background-color: #555;
+}
+
+/* Ensure the left screen content scrolls if necessary */
+.left-screen {
+  overflow-y: auto;
+  padding-bottom: 100px; /* Space for input and button */
+}
+
+@media (max-width: 768px) {
+  .chatbot-container input[type="text"], 
+  .chatbot-container select, 
+  .chatbot-container button {
     font-size: 0.9rem;
+    padding: 8px;
   }
+}
+
 
   .laptop-item img {
     width: 100%;  /* Ensure image is responsive */

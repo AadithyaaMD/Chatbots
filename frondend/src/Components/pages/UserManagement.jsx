@@ -8,7 +8,9 @@ import {
   User,
   Wallet,
 } from 'lucide-react';
-import { auth } from '../../config/config'; // Assuming Firebase is configured here
+import { auth } from "../../firebase/firebase";  // If firebase.js is inside /src/firebase
+  
+
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 
 const UserManagement = ({ onLogout = () => {} }) => {
