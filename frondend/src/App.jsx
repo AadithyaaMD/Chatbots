@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { CartProvider } from './contexts/CartContext';
 
 // Components
-import Login from './Components/pages/login';
+import Login from './Components/pages/Login.jsx';
 import SignUp from './Components/pages/Signup';
 import FirstPage from './Components/pages/FirstPage';
 import HpPage from './Components/pages/HpPage';
@@ -11,6 +11,9 @@ import DellPage from './Components/pages/DellPage';
 import Purchase from './Components/pages/Purchase';
 import CartPage from './Components/pages/Cart';
 import UserManagement from './Components/pages/UserManagement';
+import AdminDashboard from './Components/pages/AdminDashboard.jsx';
+import AdminHome from './Components/pages/AdminHome.jsx';
+
 
 function App() {
   const user = {
@@ -48,6 +51,8 @@ function App() {
                   path="/user-management"
                   element={<UserManagement user={user} onLogout={handleLogout} />}
                 />
+                <Route path="/admindashboard" element={<AdminDashboard />} />
+                <Route path="/adminhome" element={<AdminHome/>}/>
               </Routes>
             </Suspense>
           </div>
