@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { FaShoppingCart } from "react-icons/fa";
 import { getAuth } from "firebase/auth";
-import { CartService } from "./cartService";
 
 function PurchasePage() {
   const navigate = useNavigate();
@@ -21,9 +20,9 @@ function PurchasePage() {
     );
   }
 
-  const handleAddToCart = async () => {
+  const handleBuyNow = () => {
     if (!auth.currentUser) {
-      setError("Please login to add items to cart");
+      setError("Please login to proceed with the purchase");
       return;
     }
 
@@ -31,10 +30,9 @@ function PurchasePage() {
     setError(null);
 
     try {
-      await CartService.addToCart(auth.currentUser.uid, product);
-      navigate("/cart");
+      navigate("/order", { state: { product } });
     } catch (error) {
-      setError(error.message || "Failed to add product to cart");
+      setError("Failed to proceed to order page");
     } finally {
       setLoading(false);
     }
@@ -96,15 +94,15 @@ function PurchasePage() {
               </div>
 
               <button
-                onClick={handleAddToCart}
+                onClick={handleBuyNow}
                 disabled={loading}
                 className={`w-full py-3 rounded-lg text-white font-semibold
                   ${loading 
-                    ? 'bg-blue-400 cursor-not-allowed' 
-                    : 'bg-blue-600 hover:bg-blue-700'
+                    ? 'bg-green-400 cursor-not-allowed' 
+                    : 'bg-green-600 hover:bg-green-700'
                   }`}
               >
-                {loading ? 'Adding to Cart...' : 'Add to Cart'}
+                {loading ? 'Processing...' : 'Buy Now'}
               </button>
             </div>
           </div>

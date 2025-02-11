@@ -10,7 +10,7 @@ import {
 } from 'lucide-react';
 import { auth } from "../../firebase/firebase";  // If firebase.js is inside /src/firebase
   
-
+import { useNavigate } from "react-router-dom";
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 
 const UserManagement = ({ onLogout = () => {} }) => {
@@ -64,10 +64,11 @@ const UserManagement = ({ onLogout = () => {} }) => {
         console.error('Logout Error:', error);
       });
   };
-
+  const navigate = useNavigate();
   const handleViewOrders = () => {
-    console.log('Viewing Orders');
+    navigate("/vieworders"); // ✅ Navigate to ViewOrders.jsx
   };
+  
 
   const handleSettings = () => {
     console.log('Opening Settings');
