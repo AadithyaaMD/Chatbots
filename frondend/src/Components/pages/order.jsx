@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { getFirestore, collection, addDoc } from "firebase/firestore";
+import { getFirestore, collection, addDoc, doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../../firebase/firebase.js";
 
 const Order = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const auth = getAuth();
-  const db = getFirestore();
+  const firestore = getFirestore();
   const product = location.state?.product;
   const [orderId, setOrderId] = useState(null);
   const [error, setError] = useState(null);
@@ -31,7 +31,8 @@ const Order = () => {
 
     const placeOrder = async () => {
       try {
-        const orderRef = await addDoc(collection(db, "orders"), {
+        // Place order in Firestore
+        const orderRef = await addDoc(collection(firestore, "orders"), {
           userId: user.uid,
           productId: product.id || Math.random().toString(36).substr(2, 9),
           productName: product.title || "Unknown",
@@ -42,6 +43,24 @@ const Order = () => {
         });
 
         setOrderId(orderRef.id);
+
+        // Increment user's totalOrders count in Firestore
+        const userRef = doc(firestore, "users", user.uid);
+        const userSnap = await getDoc(userRef);
+
+        if (userSnap.exists()) {
+          const userData = userSnap.data();
+          const updatedTotalOrders = (userData.totalOrders || 0) + 1;
+
+          await updateDoc(userRef, {
+            totalOrders: updatedTotalOrders,
+          });
+        } else {
+          // If user document does not exist, create it
+          await setDoc(userRef, {
+            totalOrders: 1,
+          });
+        }
       } catch (err) {
         setError("Failed to place order. Please try again.");
         console.error("Order Error:", err);
@@ -49,7 +68,7 @@ const Order = () => {
     };
 
     placeOrder();
-  }, [user, product, db]);
+  }, [user, product, firestore]);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900 text-white">

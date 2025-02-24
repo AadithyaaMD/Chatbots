@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import {
   Clock,
   CreditCard,
@@ -7,71 +7,78 @@ import {
   Settings,
   User,
   Wallet,
-} from 'lucide-react';
-import { auth } from "../../firebase/firebase";  // If firebase.js is inside /src/firebase
-  
+} from "lucide-react";
+import { auth, db } from "../../firebase/firebase"; // Ensure Firestore is imported
 import { useNavigate } from "react-router-dom";
-import { onAuthStateChanged, signOut } from 'firebase/auth';
+import { onAuthStateChanged, signOut } from "firebase/auth";
+import { doc, getDoc, onSnapshot } from "firebase/firestore";
 
 const UserManagement = ({ onLogout = () => {} }) => {
+  const navigate = useNavigate();
   const [user, setUser] = useState({
-    name: 'Guest User',
-    email: 'No email provided',
-    avatar: '',
-    joinDate: 'New User',
+    name: "Guest User",
+    email: "No email provided",
+    avatar: "",
+    joinDate: "New User",
     wallet: 0,
     totalOrders: 0,
-    lastOrderDate: 'No orders yet',
+    lastOrderDate: "No orders yet",
   });
 
   useEffect(() => {
-    // Listen for authentication state changes
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
         const { displayName, email, photoURL, metadata } = currentUser;
-        setUser({
-          name: displayName || 'No Name Provided',
-          email: email || 'No email provided',
-          avatar: photoURL || '',
-          joinDate: new Date(metadata.creationTime).toLocaleDateString(),
-          wallet: 0, // Fetch wallet balance from the backend
-          totalOrders: 0, // Fetch total orders from the backend
-          lastOrderDate: 'No orders yet', // Fetch last order details from the backend
+        const userRef = doc(db, "users", currentUser.uid);
+
+        // Fetch user data in real-time
+        const unsubscribeSnapshot = onSnapshot(userRef, (docSnap) => {
+          if (docSnap.exists()) {
+            const userData = docSnap.data();
+            setUser({
+              name: displayName || "No Name Provided",
+              email: email || "No email provided",
+              avatar: photoURL || "",
+              joinDate: new Date(metadata.creationTime).toLocaleDateString(),
+              wallet: userData.wallet || 0,
+              totalOrders: userData.totalOrders || 0,
+              lastOrderDate: userData.lastOrderDate || "No orders yet",
+            });
+          }
         });
+
+        return () => unsubscribeSnapshot(); // Unsubscribe from Firestore listener
       } else {
         setUser({
-          name: 'Guest User',
-          email: 'No email provided',
-          avatar: '',
-          joinDate: 'New User',
+          name: "Guest User",
+          email: "No email provided",
+          avatar: "",
+          joinDate: "New User",
           wallet: 0,
           totalOrders: 0,
-          lastOrderDate: 'No orders yet',
+          lastOrderDate: "No orders yet",
         });
       }
     });
 
-    // Cleanup listener on component unmount
     return () => unsubscribe();
   }, []);
 
-  const handleLogout = () => {
-    signOut(auth)
-      .then(() => {
-        onLogout();
-      })
-      .catch((error) => {
-        console.error('Logout Error:', error);
-      });
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      onLogout();
+    } catch (error) {
+      console.error("Logout Error:", error);
+    }
   };
-  const navigate = useNavigate();
+
   const handleViewOrders = () => {
-    navigate("/vieworders"); // ✅ Navigate to ViewOrders.jsx
+    navigate("/vieworders");
   };
-  
 
   const handleSettings = () => {
-    console.log('Opening Settings');
+    console.log("Opening Settings");
   };
 
   return (
@@ -94,7 +101,9 @@ const UserManagement = ({ onLogout = () => {} }) => {
             <div className="flex-1 text-center md:text-left">
               <h2 className="text-2xl font-bold text-white">{user.name}</h2>
               <p className="text-zinc-400">{user.email}</p>
-              <p className="text-sm text-zinc-500">Member since {user.joinDate}</p>
+              <p className="text-sm text-zinc-500">
+                Member since {user.joinDate}
+              </p>
             </div>
             <button
               onClick={handleSettings}
@@ -118,7 +127,7 @@ const UserManagement = ({ onLogout = () => {} }) => {
               </h3>
             </div>
             <div className="mt-4 text-2xl font-bold text-white">
-              ${user.wallet.toFixed(2)}
+              ₹{user.wallet.toFixed(2)}
             </div>
             <p className="text-xs text-zinc-500">Available balance</p>
           </div>
@@ -167,9 +176,7 @@ const UserManagement = ({ onLogout = () => {} }) => {
                 <Package className="h-4 w-4" />
                 View Orders
               </button>
-              <button
-                className="w-full px-4 py-2 border border-zinc-700 hover:bg-zinc-800 text-zinc-300 rounded-md flex items-center gap-2"
-              >
+              <button className="w-full px-4 py-2 border border-zinc-700 hover:bg-zinc-800 text-zinc-300 rounded-md flex items-center gap-2">
                 <CreditCard className="h-4 w-4" />
                 Payment Methods
               </button>
@@ -178,7 +185,9 @@ const UserManagement = ({ onLogout = () => {} }) => {
 
           <div className="bg-zinc-900 p-6 rounded-lg border border-zinc-800">
             <h3 className="text-zinc-200">Account Security</h3>
-            <p className="text-zinc-500">Manage your account security settings</p>
+            <p className="text-zinc-500">
+              Manage your account security settings
+            </p>
             <div className="mt-4">
               <button
                 onClick={handleLogout}

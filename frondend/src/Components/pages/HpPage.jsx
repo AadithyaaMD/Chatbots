@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { db } from "../../firebase/firebase";
-import { doc, setDoc, getDoc, updateDoc } from "firebase/firestore";
+import { doc, setDoc, getDoc } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 
 const App = () => {
   const navigate = useNavigate();
   const [userCart, setUserCart] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState(""); // State for search query
   const auth = getAuth();
 
   const products = [
@@ -171,6 +172,11 @@ const App = () => {
     navigate("/cart");
   };
 
+  // Filter products based on search query
+  const filteredProducts = products.filter(product =>
+    product.title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   useEffect(() => {
     const initialize = async () => {
       await uploadLaptops();
@@ -194,10 +200,12 @@ const App = () => {
             type="text"
             placeholder="What are you looking for?"
             className="w-1/2 px-4 py-2 rounded-lg text-black"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)} // Update search query
           />
           <div className="flex space-x-5">
-            <button 
-              onClick={handleCartClick} 
+            <button
+              onClick={handleCartClick}
               className="text-white relative"
             >
               🛒
@@ -214,7 +222,7 @@ const App = () => {
 
       {/* Product Section */}
       <div className="container mx-auto mt-8 grid grid-cols-1 md:grid-cols-3 gap-8 px-4">
-        {products.map((product) => (
+        {filteredProducts.map((product) => (
           <div key={product.id} className="flex flex-col items-center space-y-2">
             <div
               className="hplaptop"
